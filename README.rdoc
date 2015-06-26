@@ -9,20 +9,17 @@ FallbackRouter has been tested on Rails 4.0, but should work on later 4.x versio
 
 In your Gemfile, add the engine as the *LAST* gem:
 
-<tt>
   gem 'fallback_router', github: 'markwpiper/fallback_router'
-</tt>
+
 
 In your routes.rb, mount the engine as the *LAST* entry:
 
-<tt>
   mount FallbackRouter::Engine => '/'
   FallbackRouter::Engine.routes.draw do
     # Your fallback routes go here.
     # Note that helpers and routes will be included in your regular application namespace / module
     # (This is because isolate_namespace is intentionally not called for this engine)
   end
-</tt>
 
 
 == Rack Interactions
@@ -38,14 +35,12 @@ eg: To allow OmniAuth Rack middleware to still work, you might add <tt>:constrai
 
 As a full example of how to setup your application's routes.rb, here is how to load the routes for the excellent Comfortable Mexican Sofa CMS as a fallback engine at the root of your site, and exclude mucking w/ any Rack-level Omni-auth routes:
 
-<tt>
   mount FallbackRouter::Engine => '/'
   FallbackRouter::Engine.routes.draw do
     get 'cms-css/:site_id/:identifier' => 'comfy/cms/assets#render_css', :as => 'comfy_cms_render_css_path'
     get 'cms-js/:site_id/:identifier'  => 'comfy/cms/assets#render_js',  :as => 'comfy_cms_render_js_path'
     get '/:format' => 'comfy/cms/content#show', :as => 'comfy_cms_render_page_path', :path => "(*cms_path)", :constraints => lambda {|request| !request.path.include?("/auth/") }
   end
-</tt>
 
 
 == Troubleshooting
