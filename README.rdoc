@@ -22,6 +22,15 @@ In your routes.rb, mount the engine as the *LAST* entry:
   end
 
 
+== Routing HEAD Requests
+
+Some versions of Rails 4.x require a workaround for a Rails bug with HEAD request routing when using an engine mounted at '/'.
+
+In these problematic versions, implicitly generated HEAD routes are not prioritized high enough in the Rails routing table to be routed correctly, and will be accidentally routed to the mounted engine instead of the application.
+
+To workaround this issue, call <tt>synthesize_head_routes</tt> with your application's route set before mounting the FallbackRouter.
+
+
 == Rack Interactions
 
 FallbackRouter will be last in the Rails precendence order, but depending on your Rack setup and middleware you have loaded, there may stil be routes provided by these plugins that are accidentally masked by FallbackRouter.
@@ -34,6 +43,9 @@ eg: To allow OmniAuth Rack middleware to still work, you might add <tt>:constrai
 == Example
 
 As a full example of how to setup your application's routes.rb, here is how to load the routes for the excellent Comfortable Mexican Sofa CMS as a fallback engine at the root of your site, and exclude mucking w/ any Rack-level Omni-auth routes:
+
+  # NOTE: You may need to call synthesize_head_routes if you are on a version of Rails that doesn't route HEAD requests correctly!
+  # synthesize_head_routes MyRailsProjectName::Application.routes
 
   mount FallbackRouter::Engine => '/'
   FallbackRouter::Engine.routes.draw do
